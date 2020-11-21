@@ -6,7 +6,7 @@ var userSchema = mongoose.Schema({
   username:{
     type:String,
     required:[true,'Username is required!'],
-    match:[/^.{4,12}$/,'Should be 4-12 characters!'],
+    match:[/^.{3,12}$/,'Should be 3-12 characters!'],
     trim:true,
     unique:true
   },
@@ -18,12 +18,17 @@ var userSchema = mongoose.Schema({
   name:{
     type:String,
     required:[true,'Name is required!'],
-    match:[/^.{4,12}$/,'Should be 4-12 characters!'],
+    match:[/^.{3,12}$/,'Should be 3-12 characters!'],
     trim:true
   },
   email:{
     type:String,
     match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,'Should be a vaild email address!'],
+    trim:true
+  },
+  hashValue:{
+    type:String,
+    match:[/^.{3,100}$/,'해시값을 입력하신게 맞나요?'],
     trim:true
   }
 },{
@@ -34,6 +39,10 @@ var userSchema = mongoose.Schema({
 userSchema.virtual('passwordConfirmation')
   .get(function(){ return this._passwordConfirmation; })
   .set(function(value){ this._passwordConfirmation=value; });
+
+userSchema.virtual('hashValueFix')
+  .get(function(){ return this.hashValueFix; })
+  .set(function(value){ this.hashValueFix=value; });
 
 userSchema.virtual('originalPassword')
   .get(function(){ return this._originalPassword; })
@@ -48,8 +57,8 @@ userSchema.virtual('newPassword')
   .set(function(value){ this._newPassword=value; });
 
 // password validation
-var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
-var passwordRegexErrorMessage = 'Should be minimum 8 characters of alphabet and number combination!';
+var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$/;
+var passwordRegexErrorMessage = 'Should be minimum 6 characters of alphabet and number combination!';
 userSchema.path('password').validate(function(v) {
   var user = this;
 
@@ -75,6 +84,7 @@ userSchema.path('password').validate(function(v) {
     else if(!bcrypt.compareSync(user.currentPassword, user.originalPassword)){
       user.invalidate('currentPassword', 'Current Password is invalid!');
     }
+
 
     if(user.newPassword && !passwordRegex.test(user.newPassword)){
       user.invalidate("newPassword", passwordRegexErrorMessage);

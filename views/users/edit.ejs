@@ -55,6 +55,16 @@
         </div>
 
         <div class="form-group row">
+          <label for="hashValue" class="col-sm-3 col-form-label">hashValue</label>
+          <div class="col-sm-9">
+            <input type="text" id="hashValue" name="hashValue" value="<%= user.hashValue %>" class="form-control <%= (errors.hashValue)?'is-invalid':'' %>">
+            <% if(errors.hashValue){ %>
+              <span class="invalid-feedback"><%= errors.hashValueFix.message %></span>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="form-group row">
           <label for="newPassword" class="col-sm-3 col-form-label">New Password</label>
           <div class="col-sm-9 col-sm-offset-3">
             <input type="password" id="newPassword" name="newPassword" value="" class="form-control <%= (errors.newPassword)?'is-invalid':'' %>">
